@@ -99,6 +99,24 @@
     return overlay;
   }
 
+  // 创建元素标记
+  function createElementMarker(annotation) {
+    const marker = document.createElement("div");
+    marker.className = "cai-element-marker";
+    marker.setAttribute("data-annotation-index", annotation.index);
+    marker.textContent = annotation.index;
+
+    const rect = annotation.elementRect;
+    const scrollLeft =
+      window.pageXOffset || document.documentElement.scrollLeft;
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    marker.style.left = rect.right + scrollLeft + 5 + "px";
+    marker.style.top = rect.top + scrollTop + "px";
+
+    return marker;
+  }
+
   // 创建指示器面板
   function createIndicatorPanel() {
     const panel = document.createElement("div");
@@ -285,12 +303,49 @@
       dialog.style.transform = "scale(0.8)";
       dialog.style.transformOrigin = "top left";
 
-      // 计算对话框位置（在元素附近）
-      const x = Math.min(elementInfo.position.x, window.innerWidth - 420);
-      const y = Math.min(
-        elementInfo.position.y + elementInfo.position.height + 10,
-        window.innerHeight - 350,
-      );
+      // 估算对话框高度（头部 + 信息 + textarea + 按钮 + padding）
+      // 实际测量后调整：头部(60) + info(80) + textarea(100) + buttons(60) + padding(40) ≈ 340px
+      const estimatedDialogHeight = 380;
+      const estimatedDialogWidth = 500;
+      const spacing = 15;
+
+      // 计算 x 位置：确保对话框不超出右边界
+      let x = elementInfo.position.x;
+      if (x + estimatedDialogWidth > window.innerWidth - spacing) {
+        x = window.innerWidth - estimatedDialogWidth - spacing;
+      }
+      if (x < spacing) {
+        x = spacing;
+      }
+
+      // 计算 y 位置：优先在元素下方，如果不够空间则在上方
+      const spaceBelow =
+        window.innerHeight -
+        elementInfo.position.y -
+        elementInfo.position.height;
+      const spaceAbove = elementInfo.position.y;
+
+      let y;
+      if (spaceBelow >= estimatedDialogHeight + spacing) {
+        // 下方空间充足
+        y = elementInfo.position.y + elementInfo.position.height + spacing;
+      } else if (spaceAbove >= estimatedDialogHeight + spacing) {
+        // 下方不够，但上方充足
+        y = elementInfo.position.y - estimatedDialogHeight - spacing;
+      } else {
+        // 上下都不够，选择空间较大的一侧
+        if (spaceBelow > spaceAbove) {
+          // 下方空间更大，贴底显示
+          y = Math.max(
+            spacing,
+            window.innerHeight - estimatedDialogHeight - spacing,
+          );
+        } else {
+          // 上方空间更大，贴顶显示
+          y = spacing;
+        }
+      }
+
       dialog.style.left = x + "px";
       dialog.style.top = y + "px";
 
@@ -388,7 +443,28 @@
     listContainer.querySelectorAll(".cai-delete-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         const index = parseInt(e.target.dataset.index);
-        annotations.splice(index, 1);
+        const removed = annotations.splice(index, 1);
+
+        // 删除对应的标记
+        const marker = document.querySelector(
+          `.cai-element-marker[data-annotation-index="${removed[0].index}"]`,
+        );
+        if (marker) {
+          marker.remove();
+        }
+
+        // 重新编号
+        annotations.forEach((ann, i) => {
+          ann.index = i + 1;
+          const marker = document.querySelector(
+            `.cai-element-marker[data-annotation-index="${ann.index + 1}"]`,
+          );
+          if (marker) {
+            marker.setAttribute("data-annotation-index", ann.index);
+            marker.textContent = ann.index;
+          }
+        });
+
         updateAnnotationsList();
       });
     });
@@ -440,12 +516,31 @@
 
     showCommentDialog(elementInfo).then((comment) => {
       if (comment !== null && comment.trim() !== "") {
-        annotations.push({
+        const annotation = {
           ...elementInfo,
           comment: comment.trim(),
           timestamp: Date.now(),
-        });
+          index: annotations.length + 1,
+          element: e.target,
+        };
+
+        // 保存元素的矩形位置信息（用于定位标记）
+        const rect = e.target.getBoundingClientRect();
+        annotation.elementRect = {
+          top: rect.top,
+          right: rect.right,
+          bottom: rect.bottom,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+        };
+
+        annotations.push(annotation);
         updateAnnotationsList();
+
+        // 在元素上添加标记
+        const marker = createElementMarker(annotation);
+        document.body.appendChild(marker);
       }
     });
   }
@@ -485,6 +580,12 @@
   // 清空所有Comments
   function clearAnnotations() {
     annotations = [];
+
+    // 删除所有标记
+    document.querySelectorAll(".cai-element-marker").forEach((marker) => {
+      marker.remove();
+    });
+
     updateAnnotationsList();
   }
 
