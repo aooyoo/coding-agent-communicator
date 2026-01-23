@@ -4,6 +4,7 @@
 (function () {
   // 状态管理
   let isActive = false;
+  let isPaused = false;
   let annotations = [];
   let currentElement = null;
   let highlightOverlay = null;
@@ -107,12 +108,15 @@
     panel.innerHTML = `
       <div class="cai-panel-header">
         <span class="cai-panel-title">🎯 Coding Agent Communicator</span>
-        <button class="cai-close-btn" id="cai-minimize-btn">−</button>
+        <div class="cai-header-buttons">
+          <button class="cai-header-btn" id="cai-pause-btn" title="暂停/恢复">⏸</button>
+          <button class="cai-close-btn" id="cai-minimize-btn">−</button>
+        </div>
       </div>
       <div class="cai-panel-content">
         <div class="cai-status">
           <span class="cai-status-dot active"></span>
-          <span class="cai-status-text">悬停在元素上点击添加Comments</span>
+          <span class="cai-status-text" id="cai-status-text">悬停在元素上点击添加Comments</span>
         </div>
         <div class="cai-options">
           <label class="cai-checkbox">
@@ -135,6 +139,9 @@
     document
       .getElementById("cai-minimize-btn")
       .addEventListener("click", togglePanel);
+    document
+      .getElementById("cai-pause-btn")
+      .addEventListener("click", togglePause);
     document
       .getElementById("cai-clear-btn")
       .addEventListener("click", clearAnnotations);
@@ -389,7 +396,7 @@
 
   // 鼠标移动事件
   function handleMouseMove(e) {
-    if (!isActive) return;
+    if (!isActive || isPaused) return;
 
     const element = e.target;
     if (
@@ -407,7 +414,7 @@
 
   // 鼠标点击事件
   function handleClick(e) {
-    if (!isActive) return;
+    if (!isActive || isPaused) return;
 
     // 忽略点击在面板上的事件
     if (e.target.closest("#cai-indicator-panel")) {
@@ -447,6 +454,32 @@
   function togglePanel() {
     if (!indicatorPanel) return;
     indicatorPanel.classList.toggle("cai-minimized");
+  }
+
+  // 切换暂停状态
+  function togglePause() {
+    if (!indicatorPanel) return;
+
+    isPaused = !isPaused;
+    const pauseBtn = document.getElementById("cai-pause-btn");
+    const statusText = document.getElementById("cai-status-text");
+
+    if (isPaused) {
+      pauseBtn.textContent = "▶";
+      pauseBtn.title = "恢复";
+      statusText.textContent = "已暂停 - 可以正常操作页面";
+      document.body.style.cursor = "";
+      if (highlightOverlay) {
+        highlightOverlay.style.display = "none";
+      }
+      showNotification("⏸ 已暂停，可以正常操作页面");
+    } else {
+      pauseBtn.textContent = "⏸";
+      pauseBtn.title = "暂停";
+      statusText.textContent = "悬停在元素上点击添加Comments";
+      document.body.style.cursor = "crosshair";
+      showNotification("▶ 已恢复");
+    }
   }
 
   // 清空所有Comments
