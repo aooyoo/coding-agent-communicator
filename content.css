@@ -1,0 +1,440 @@
+/* Coding Agent Communicator - Content Styles */
+
+/* 指示器面板 */
+#cai-indicator-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 380px;
+    max-height: 600px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(0, 0, 0, 0.1);
+    z-index: 2147483647;
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+        sans-serif;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+#cai-indicator-panel.cai-minimized {
+    max-height: 60px;
+}
+
+#cai-indicator-panel.cai-minimized .cai-panel-content {
+    display: none;
+}
+
+/* 面板头部 */
+.cai-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #1a1a1a;
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.cai-panel-title {
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cai-close-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.cai-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* 面板内容 */
+.cai-panel-content {
+    padding: 20px;
+    max-height: 520px;
+    overflow-y: auto;
+}
+
+/* 选项区域 */
+.cai-options {
+    padding: 12px 16px;
+    background: #f7f7f7;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.cai-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #333;
+    user-select: none;
+}
+
+.cai-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #1a1a1a;
+}
+
+.cai-checkbox span {
+    line-height: 1;
+}
+
+/* 状态指示 */
+.cai-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #f7f7f7;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.cai-status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ccc;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.cai-status-dot.active {
+    background: #51cf66;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.cai-status-text {
+    font-size: 13px;
+    color: #666;
+    flex: 1;
+}
+
+/* Comments列表 */
+.cai-annotations-list {
+    margin-bottom: 20px;
+    min-height: 100px;
+}
+
+.cai-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    font-size: 14px;
+}
+
+.cai-annotation-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #e5e5e5;
+    transition: all 0.2s;
+}
+
+.cai-annotation-item:hover {
+    border-color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cai-annotation-number {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    background: #1a1a1a;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.cai-annotation-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.cai-annotation-element {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+    word-break: break-all;
+}
+
+.cai-annotation-comment {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.cai-delete-btn {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: #ffe3e3;
+    color: #e03131;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.cai-delete-btn:hover {
+    background: #e03131;
+    color: white;
+}
+
+/* 操作按钮 */
+.cai-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.cai-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.cai-btn-primary {
+    background: #1a1a1a;
+    color: white;
+}
+
+.cai-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.cai-btn-secondary {
+    background: #f1f1f1;
+    color: #666;
+}
+
+.cai-btn-secondary:hover {
+    background: #e5e5e5;
+}
+
+/* Comments对话框 */
+.cai-comment-dialog {
+    position: fixed;
+    background: transparent;
+    z-index: 2147483648;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.cai-dialog-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.cai-dialog-header {
+    padding: 20px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.cai-dialog-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.cai-element-info {
+    padding: 16px 20px;
+    background: #f7f7f7;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.cai-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.cai-info-row:last-child {
+    margin-bottom: 0;
+}
+
+.cai-info-row code {
+    flex: 1;
+    background: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-family: "Monaco", "Menlo", monospace;
+    font-size: 12px;
+    color: #1a1a1a;
+    word-break: break-all;
+}
+
+.cai-comment-dialog textarea {
+    width: 100%;
+    padding: 16px 20px;
+    border: none;
+    border-bottom: 1px solid #e5e5e5;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 100px;
+    box-sizing: border-box;
+}
+
+.cai-comment-dialog textarea:focus {
+    outline: none;
+}
+
+.cai-dialog-actions {
+    display: flex;
+    gap: 10px;
+    padding: 16px 20px;
+    justify-content: flex-end;
+}
+
+/* 通知 */
+.cai-notification {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #333;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 2147483649;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.cai-notification.cai-show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* 滚动条样式 */
+.cai-panel-content::-webkit-scrollbar,
+.cai-dialog-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.cai-panel-content::-webkit-scrollbar-track,
+.cai-dialog-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.cai-panel-content::-webkit-scrollbar-thumb,
+.cai-dialog-content::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 3px;
+}
+
+.cai-panel-content::-webkit-scrollbar-thumb:hover,
+.cai-dialog-content::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+/* 防止内容被选中（在激活状态下） */
+body.cai-active {
+    user-select: none;
+}
+
+/* 高亮覆盖层样式增强 */
+#cai-highlight-overlay {
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.5),
+        0 0 20px rgba(26, 26, 26, 0.3);
+}
+
+#cai-highlight-overlay::after {
+    content: attr(data-label);
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}

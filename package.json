@@ -1,0 +1,10 @@
+{
+  "name": "coding-agent-communicator",
+  "version": "1.0.0",
+  "description": "Chrome 开发者工具插件 - 与 Coding Agent 交流的页面元素注释工具",
+  "scripts": {
+    "build": "echo 'Building extension...' && echo 'Load the folder in chrome://extensions/'"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
