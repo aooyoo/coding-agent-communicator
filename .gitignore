@@ -16,3 +16,7 @@ yarn-error.log
 dist/
 build/
 *.log
+
+# Private workspace (separate local repo)
+.private/
+PUBLISH.md
