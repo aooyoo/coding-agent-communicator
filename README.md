@@ -12,15 +12,7 @@
 
 ## 📦 安装方法
 
-### 1. 生成图标（首次安装需要）
-
-在浏览器中打开 `icons/generate.html`，点击"下载所有图标"按钮，将下载的 PNG 文件保存到 `icons/` 目录：
-- `icon16.png`
-- `icon32.png`
-- `icon48.png`
-- `icon128.png`
-
-### 2. 加载插件到 Chrome
+### 加载插件到 Chrome
 
 1. 打开 Chrome 浏览器
 2. 访问 `chrome://extensions/`
