@@ -701,6 +701,17 @@
       indicatorPanel = null;
     }
 
+    // 删除所有数字标记
+    document.querySelectorAll(".cai-element-marker").forEach((marker) => {
+      marker.remove();
+    });
+
+    // 关闭可能打开的对话框
+    if (currentDialog && currentDialog.parentElement) {
+      currentDialog.remove();
+      currentDialog = null;
+    }
+
     // 停止捕获控制台错误
     stopErrorCapture();
 
