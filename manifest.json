@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Coding Agent Communicator",
-  "version": "1.0.1",
-  "description": "像 VisBug 一样的页面元素注释工具，用于向 Coding Agent 提供可视化反馈",
+  "version": "1.0.2",
+  "description": "页面元素注释工具，用于向 Coding Agent 提供可视化反馈",
   "permissions": ["activeTab", "scripting"],
   "action": {
     "default_popup": "popup.html",
@@ -24,7 +24,8 @@
       "matches": ["<all_urls>"],
       "js": ["content.js"],
       "css": ["content.css"],
-      "run_at": "document_idle"
+      "run_at": "document_idle",
+      "all_frames": true
     }
   ],
   "web_accessible_resources": [

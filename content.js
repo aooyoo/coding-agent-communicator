@@ -14,6 +14,46 @@
   let originalOnError = null;
   let originalConsoleError = null;
 
+  // 检测是否在iframe中
+  const isInIframe = window !== window.top;
+  const isMainFrame = !isInIframe;
+
+  // 存储iframe的偏移量（用于计算位置）
+  let iframeOffset = { x: 0, y: 0 };
+
+  // 获取iframe相对于主窗口的偏移量
+  function getIframeOffset() {
+    if (!isInIframe) return { x: 0, y: 0 };
+
+    let x = 0;
+    let y = 0;
+    let currentFrame = window;
+    let currentWindow = window;
+
+    try {
+      while (currentWindow !== window.top) {
+        const frameElement = currentWindow.frameElement;
+        if (!frameElement) break;
+
+        const rect = frameElement.getBoundingClientRect();
+        x += rect.left + frameElement.scrollLeft;
+        y += rect.top + frameElement.scrollTop;
+
+        // 获取父窗口的滚动偏移
+        currentWindow = currentWindow.parent;
+        if (currentWindow !== window.top) {
+          x -= currentWindow.scrollX || 0;
+          y -= currentWindow.scrollY || 0;
+        }
+      }
+    } catch (e) {
+      // 跨域iframe无法访问父窗口，使用相对位置
+      console.log("跨域iframe，无法计算绝对位置");
+    }
+
+    return { x, y };
+  }
+
   // 捕获控制台错误
   function startErrorCapture() {
     capturedErrors = [];
@@ -85,7 +125,8 @@
   // 创建高亮覆盖层
   function createHighlightOverlay() {
     const overlay = document.createElement("div");
-    overlay.id = "cai-highlight-overlay";
+    // 在iframe中添加特殊标识
+    overlay.id = isInIframe ? "cai-highlight-overlay-iframe" : "cai-highlight-overlay";
     overlay.style.cssText = `
       position: absolute;
       pointer-events: none;
@@ -111,8 +152,17 @@
       window.pageXOffset || document.documentElement.scrollLeft;
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-    marker.style.left = rect.right + scrollLeft + 5 + "px";
-    marker.style.top = rect.top + scrollTop + "px";
+    // 标记应该显示在主窗口中，所以需要使用绝对位置
+    if (annotation.isInIframe && annotation.iframeOffset) {
+      // 在iframe中创建标记，但位置是相对于iframe的
+      marker.style.left = rect.right + 5 + "px";
+      marker.style.top = rect.top + "px";
+      // 在iframe中的标记
+      marker.classList.add("cai-marker-in-iframe");
+    } else {
+      marker.style.left = rect.right + scrollLeft + 5 + "px";
+      marker.style.top = rect.top + scrollTop + "px";
+    }
 
     return marker;
   }
@@ -179,6 +229,11 @@
       window.pageXOffset || document.documentElement.scrollLeft;
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
+    // 更新iframe偏移量
+    if (isInIframe) {
+      iframeOffset = getIframeOffset();
+    }
+
     highlightOverlay.style.display = "block";
     highlightOverlay.style.top = rect.top + scrollTop + "px";
     highlightOverlay.style.left = rect.left + scrollLeft + "px";
@@ -199,6 +254,11 @@
       if (classes.length > 0) {
         label = `${tagName}.${classes.join(".")}`;
       }
+    }
+
+    // 如果在iframe中，添加iframe标识
+    if (isInIframe) {
+      label = `[iframe] ${label}`;
     }
 
     highlightOverlay.setAttribute("data-label", label);
@@ -276,21 +336,33 @@
       identifier = `${tagName} "${text}"`;
     }
 
+    // 如果在iframe中，添加iframe标识
+    let absoluteX = Math.round(rect.left);
+    let absoluteY = Math.round(rect.top);
+    if (isInIframe) {
+      iframeOffset = getIframeOffset();
+      absoluteX = Math.round(rect.left + iframeOffset.x);
+      absoluteY = Math.round(rect.top + iframeOffset.y);
+      identifier = `[iframe] ${identifier}`;
+    }
+
     return {
       tagName,
       identifier,
       selector: generateSelector(element),
       position: {
-        x: Math.round(rect.left),
-        y: Math.round(rect.top),
+        x: absoluteX,
+        y: absoluteY,
         width: Math.round(rect.width),
         height: Math.round(rect.height),
       },
+      isInIframe,
+      iframeOffset: { ...iframeOffset },
     };
   }
 
   // 显示Comments输入对话框
-  function showCommentDialog(elementInfo) {
+  function showCommentDialog(elementInfo, element) {
     // 关闭之前的对话框
     if (currentDialog && currentDialog.parentElement) {
       currentDialog.remove();
@@ -309,8 +381,22 @@
       const estimatedDialogWidth = 500;
       const spacing = 15;
 
+      // 计算相对于当前窗口的位置
+      let relativeX, relativeY;
+
+      if (isInIframe && element) {
+        // 在iframe中，使用相对于元素的位置
+        const rect = element.getBoundingClientRect();
+        relativeX = rect.left;
+        relativeY = rect.bottom;
+      } else {
+        // 在主窗口中
+        relativeX = elementInfo.position.x;
+        relativeY = elementInfo.position.y + elementInfo.position.height;
+      }
+
       // 计算 x 位置：确保对话框不超出右边界
-      let x = elementInfo.position.x;
+      let x = relativeX;
       if (x + estimatedDialogWidth > window.innerWidth - spacing) {
         x = window.innerWidth - estimatedDialogWidth - spacing;
       }
@@ -319,19 +405,18 @@
       }
 
       // 计算 y 位置：优先在元素下方，如果不够空间则在上方
-      const spaceBelow =
-        window.innerHeight -
-        elementInfo.position.y -
-        elementInfo.position.height;
-      const spaceAbove = elementInfo.position.y;
+      const spaceBelow = window.innerHeight - relativeY;
+      const spaceAbove = isInIframe && element
+        ? element.getBoundingClientRect().top
+        : elementInfo.position.y;
 
       let y;
       if (spaceBelow >= estimatedDialogHeight + spacing) {
         // 下方空间充足
-        y = elementInfo.position.y + elementInfo.position.height + spacing;
+        y = relativeY + spacing;
       } else if (spaceAbove >= estimatedDialogHeight + spacing) {
         // 下方不够，但上方充足
-        y = elementInfo.position.y - estimatedDialogHeight - spacing;
+        y = (isInIframe && element ? element.getBoundingClientRect().top : elementInfo.position.y) - estimatedDialogHeight - spacing;
       } else {
         // 上下都不够，选择空间较大的一侧
         if (spaceBelow > spaceAbove) {
@@ -475,13 +560,20 @@
     if (!isActive || isPaused) return;
 
     const element = e.target;
-    if (
-      element === highlightOverlay ||
-      element === indicatorPanel ||
-      indicatorPanel?.contains(element)
-    ) {
+    const overlayId = isInIframe ? "cai-highlight-overlay-iframe" : "cai-highlight-overlay";
+
+    // 忽略高亮层
+    if (element.id === overlayId) {
       highlightOverlay.style.display = "none";
       return;
+    }
+
+    // 在主窗口中忽略面板上的元素
+    if (isMainFrame) {
+      if (element === indicatorPanel || indicatorPanel?.contains(element)) {
+        highlightOverlay.style.display = "none";
+        return;
+      }
     }
 
     currentElement = element;
@@ -492,8 +584,8 @@
   function handleClick(e) {
     if (!isActive || isPaused) return;
 
-    // 忽略点击在面板上的事件
-    if (e.target.closest("#cai-indicator-panel")) {
+    // 在主窗口中忽略点击在面板上的事件
+    if (isMainFrame && e.target.closest("#cai-indicator-panel")) {
       return;
     }
 
@@ -514,7 +606,7 @@
 
     const elementInfo = getElementInfo(e.target);
 
-    showCommentDialog(elementInfo).then((comment) => {
+    showCommentDialog(elementInfo, e.target).then((comment) => {
       if (comment !== null && comment.trim() !== "") {
         const annotation = {
           ...elementInfo,
@@ -536,7 +628,11 @@
         };
 
         annotations.push(annotation);
-        updateAnnotationsList();
+
+        // 只在主窗口中更新注释列表
+        if (isMainFrame) {
+          updateAnnotationsList();
+        }
 
         // 在元素上添加标记
         const marker = createElementMarker(annotation);
@@ -591,6 +687,9 @@
 
   // 完成并复制到剪贴板
   function finishAndCopy() {
+    // 只在主窗口中执行
+    if (!isMainFrame) return;
+
     const viewport = `${window.innerWidth}×${window.innerHeight}`;
     const url = window.location.pathname;
 
@@ -620,6 +719,9 @@
       annotations.forEach((ann, index) => {
         output += `### ${index + 1}. ${ann.identifier}\n`;
         output += `**Location:** ${ann.selector}\n`;
+        if (ann.isInIframe) {
+          output += `**Source:** iframe\n`;
+        }
         output += `**Comment:** ${ann.comment}\n\n`;
       });
     }
@@ -666,23 +768,29 @@
     isActive = true;
 
     // 先清理可能存在的旧元素
-    const oldOverlay = document.getElementById("cai-highlight-overlay");
+    const overlayId = isInIframe ? "cai-highlight-overlay-iframe" : "cai-highlight-overlay";
+    const oldOverlay = document.getElementById(overlayId);
     if (oldOverlay) oldOverlay.remove();
 
     const oldPanel = document.getElementById("cai-indicator-panel");
     if (oldPanel) oldPanel.remove();
 
     highlightOverlay = createHighlightOverlay();
-    indicatorPanel = createIndicatorPanel();
 
-    // 开始捕获控制台错误
-    startErrorCapture();
+    // 只在主窗口中创建面板和开始错误捕获
+    if (isMainFrame) {
+      indicatorPanel = createIndicatorPanel();
+      // 开始捕获控制台错误
+      startErrorCapture();
+    }
 
     document.addEventListener("mousemove", handleMouseMove, true);
     document.addEventListener("click", handleClick, true);
 
     document.body.style.cursor = "crosshair";
-    showNotification("🎯 Coding Agent Communicator 已启动");
+    if (isMainFrame) {
+      showNotification("🎯 Coding Agent Communicator 已启动");
+    }
   }
 
   // 停止工具
@@ -696,9 +804,14 @@
       highlightOverlay = null;
     }
 
-    if (indicatorPanel) {
-      indicatorPanel.remove();
-      indicatorPanel = null;
+    // 只在主窗口中删除面板和停止错误捕获
+    if (isMainFrame) {
+      if (indicatorPanel) {
+        indicatorPanel.remove();
+        indicatorPanel = null;
+      }
+      // 停止捕获控制台错误
+      stopErrorCapture();
     }
 
     // 删除所有数字标记
@@ -711,9 +824,6 @@
       currentDialog.remove();
       currentDialog = null;
     }
-
-    // 停止捕获控制台错误
-    stopErrorCapture();
 
     document.removeEventListener("mousemove", handleMouseMove, true);
     document.removeEventListener("click", handleClick, true);

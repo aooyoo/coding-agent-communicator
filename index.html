@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Coding Agent Communicator - 页面元素注释工具</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    "Helvetica Neue", Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                background: #ffffff;
+            }
+
+            .container {
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+
+            /* Header */
+            header {
+                text-align: center;
+                padding: 80px 0 60px;
+                color: #2c3e50;
+            }
+
+            .logo {
+                font-size: 64px;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                font-size: 42px;
+                font-weight: 700;
+                margin-bottom: 15px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .tagline {
+                font-size: 20px;
+                opacity: 0.8;
+                margin-bottom: 30px;
+            }
+
+            .buttons {
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                padding: 14px 32px;
+                border: none;
+                border-radius: 30px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-decoration: none;
+            }
+
+            .btn-primary {
+                background: white;
+                color: #667eea;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            }
+
+            .btn-secondary {
+                background: white;
+                color: #667eea;
+                border: 2px solid #667eea;
+            }
+
+            .btn-secondary:hover {
+                background: #f8f9fa;
+                transform: translateY(-2px);
+            }
+
+            /* Content */
+            .content {
+                background: white;
+                border-radius: 20px;
+                padding: 60px;
+                margin-bottom: 40px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            }
+
+            section {
+                margin-bottom: 50px;
+            }
+
+            section:last-child {
+                margin-bottom: 0;
+            }
+
+            h2 {
+                font-size: 28px;
+                color: #2c3e50;
+                margin-bottom: 25px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            h2 .icon {
+                font-size: 32px;
+            }
+
+            .features {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 25px;
+            }
+
+            .feature-card {
+                padding: 25px;
+                background: #f8f9fa;
+                border-radius: 12px;
+                transition: transform 0.3s;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .feature-card .icon {
+                font-size: 36px;
+                margin-bottom: 15px;
+            }
+
+            .feature-card h3 {
+                font-size: 18px;
+                color: #2c3e50;
+                margin-bottom: 10px;
+            }
+
+            .feature-card p {
+                color: #6c757d;
+                font-size: 14px;
+            }
+
+            /* Steps */
+            .steps {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .step {
+                display: flex;
+                gap: 20px;
+                align-items: flex-start;
+            }
+
+            .step-number {
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                flex-shrink: 0;
+            }
+
+            .step-content h3 {
+                font-size: 18px;
+                color: #2c3e50;
+                margin-bottom: 8px;
+            }
+
+            .step-content p {
+                color: #6c757d;
+            }
+
+            /* Changelog */
+            .changelog-item {
+                padding: 20px;
+                background: #f8f9fa;
+                border-radius: 12px;
+                margin-bottom: 15px;
+            }
+
+            .changelog-item h3 {
+                font-size: 16px;
+                color: #2c3e50;
+                margin-bottom: 10px;
+            }
+
+            .changelog-item ul {
+                margin: 0;
+                padding-left: 20px;
+            }
+
+            .changelog-item li {
+                color: #6c757d;
+                font-size: 14px;
+            }
+
+            .version-badge {
+                display: inline-block;
+                padding: 4px 10px;
+                background: #e3f2fd;
+                color: #1976d2;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+
+            /* Privacy Notice */
+            .privacy-notice {
+                padding: 20px;
+                background: #fff3cd;
+                border-left: 4px solid #ffc107;
+                border-radius: 8px;
+            }
+
+            .privacy-notice p {
+                margin: 0;
+                color: #856404;
+            }
+
+            .privacy-notice a {
+                color: #856404;
+                text-decoration: underline;
+            }
+
+            /* Footer */
+            footer {
+                text-align: center;
+                padding: 40px 0;
+                color: #6c757d;
+            }
+
+            footer p {
+                margin-bottom: 10px;
+            }
+
+            footer a {
+                color: #667eea;
+                text-decoration: none;
+            }
+
+            footer a:hover {
+                text-decoration: underline;
+            }
+
+            @media (max-width: 600px) {
+                header {
+                    padding: 50px 0 40px;
+                }
+
+                h1 {
+                    font-size: 32px;
+                }
+
+                .tagline {
+                    font-size: 16px;
+                }
+
+                .content {
+                    padding: 30px 20px;
+                }
+
+                h2 {
+                    font-size: 24px;
+                }
+
+                .features {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="logo">🎯</div>
+            <h1>Coding Agent Communicator</h1>
+            <p class="tagline">
+                向 Coding Agent 提供精准修改反馈的页面元素注释工具
+            </p>
+            <div class="buttons">
+                <a href="#install" class="btn btn-primary">安装扩展</a>
+                <a href="demo.html" class="btn btn-secondary">试用演示</a>
+                <a href="privacy.html" class="btn btn-secondary">隐私政策</a>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="content">
+                <section>
+                    <h2><span class="icon">✨</span>功能特点</h2>
+                    <div class="features">
+                        <div class="feature-card">
+                            <div class="icon">🎨</div>
+                            <h3>可视化标注</h3>
+                            <p>
+                                鼠标悬停在页面元素上即可看到高亮效果，点击添加你的注释反馈
+                            </p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="icon">📍</div>
+                            <h3>精确定位</h3>
+                            <p>自动捕获元素的 CSS 选择器、位置坐标和尺寸信息</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="icon">📋</div>
+                            <h3>一键导出</h3>
+                            <p>
+                                完成后点击"完成并复制"，结果自动格式化为
+                                Markdown
+                            </p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="icon">🖼️</div>
+                            <h3>iframe 支持</h3>
+                            <p>
+                                支持在 iframe 内部元素上进行标注（同源 iframe
+                                完全支持）
+                            </p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="icon">🐛</div>
+                            <h3>错误捕获</h3>
+                            <p>可选捕获控制台错误信息，帮助调试问题</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="icon">🔒</div>
+                            <h3>隐私保护</h3>
+                            <p>
+                                所有数据处理均在本地进行，不会发送到任何服务器
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="install">
+                    <h2><span class="icon">🚀</span>安装方法</h2>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h3>下载扩展文件</h3>
+                                <p>
+                                    从 GitHub 仓库下载最新的 release
+                                    压缩包或克隆代码
+                                </p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h3>打开扩展管理页面</h3>
+                                <p>
+                                    在浏览器地址栏输入
+                                    <code>chrome://extensions</code> 并按回车
+                                </p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h3>启用开发者模式</h3>
+                                <p>点击右上角的"开发者模式"开关</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h3>加载扩展</h3>
+                                <p>
+                                    点击"加载已解压的扩展程序"，选择下载的扩展文件夹
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2><span class="icon">📝</span>使用说明</h2>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h3>启动工具</h3>
+                                <p>
+                                    点击浏览器工具栏的插件图标，然后点击"启动工具"
+                                </p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h3>添加注释</h3>
+                                <p>鼠标悬停在元素上，点击后输入你的反馈注释</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h3>导出结果</h3>
+                                <p>
+                                    完成后点击"完成并复制"，结果会自动复制到剪贴板
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2><span class="icon">📢</span>更新日志</h2>
+                    <div class="changelog-item">
+                        <div class="version-badge">v1.0.2</div>
+                        <h3>2026年3月</h3>
+                        <ul>
+                            <li>
+                                ✨ 新增 iframe 元素支持（同源 iframe 完全支持）
+                            </li>
+                            <li>📄 添加隐私政策页面</li>
+                            <li>🐛 修复部分页面的元素定位问题</li>
+                        </ul>
+                    </div>
+                    <div class="changelog-item">
+                        <div class="version-badge">v1.0.1</div>
+                        <h3>初始版本</h3>
+                        <ul>
+                            <li>🎉 首次发布</li>
+                            <li>✨ 支持元素高亮和注释</li>
+                            <li>✨ 支持控制台错误捕获</li>
+                            <li>✨ 支持 Markdown 格式导出</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2><span class="icon">🔒</span>隐私说明</h2>
+                    <div class="privacy-notice">
+                        <p>
+                            <strong>重要：</strong
+                            >本扩展的所有数据处理均在本地浏览器中进行，我们不会将任何数据发送到外部服务器。详情请查看
+                            <a href="privacy.html">隐私政策</a>。
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <footer>
+            <p>Coding Agent Communicator - 开源项目</p>
+            <p>
+                <a href="https://github.com/aooyoo/coding-agent-communicator"
+                    >GitHub 仓库</a
+                >
+            </p>
+        </footer>
+    </body>
+</html>
