@@ -3,7 +3,7 @@
   "name": "Coding Agent Communicator",
   "version": "1.0.2",
   "description": "页面元素注释工具，用于向 Coding Agent 提供可视化反馈",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "tabs", "clipboardWrite"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -26,12 +26,6 @@
       "css": ["content.css"],
       "run_at": "document_idle",
       "all_frames": true
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": ["injected.js"],
-      "matches": ["<all_urls>"]
     }
   ]
 }

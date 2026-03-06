@@ -211,7 +211,20 @@
                         <strong>scripting：</strong
                         >允许扩展在页面上注入脚本，用于实现标注功能
                     </li>
+                    <li>
+                        <strong>tabs：</strong
+                        >用于读取当前标签页的 URL，以便在输出报告中记录页面地址，并判断是否为系统页面（如 chrome:// 等不支持的页面）
+                    </li>
+                    <li>
+                        <strong>clipboardWrite：</strong
+                        >用于将格式化后的反馈报告写入剪贴板，供用户粘贴发送给 Coding Agent
+                    </li>
                 </ul>
+
+                <h3>关于 iframe 支持</h3>
+                <p>
+                    本扩展的内容脚本会注入到页面中所有的 iframe 框架（all_frames），这是为了支持在嵌套页面（如内嵌预览、组件库演示等 iframe 内的元素）上进行标注。脚本仅在用户主动启动工具后才执行元素高亮和标注功能，不会在后台持续读取或处理 iframe 内的页面内容。
+                </p>
 
                 <h2>6. 第三方服务</h2>
                 <p>
