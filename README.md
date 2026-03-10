@@ -1,6 +1,6 @@
 # 🎯 Coding Agent Communicator
 
-一个像 VisBug 一样的 Chrome 开发者工具插件，用于在页面上添加可视化注释，并将反馈信息发送给 Coding Agent。
+一个 Chrome 开发者工具插件，用于在页面上添加可视化注释，并将反馈信息发送给 Coding Agent。
 
 ## ✨ 功能特性
 
@@ -12,7 +12,11 @@
 
 ## 📦 安装方法
 
-### 加载插件到 Chrome
+### 方式一：Chrome Web Store 安装（推荐）
+
+直接从 Chrome 应用商店安装：[Coding Agent Communicator](https://chromewebstore.google.com/detail/coding-agent-communicator/enegomjnlhjlfefoofggbdmcnbjpcnfl)
+
+### 方式二：手动加载（开发者模式）
 
 1. 打开 Chrome 浏览器
 2. 访问 `chrome://extensions/`
