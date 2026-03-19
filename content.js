@@ -167,6 +167,55 @@
     return marker;
   }
 
+  // 面板拖动功能
+  function setupPanelDrag(panel) {
+    const header = panel.querySelector(".cai-panel-header");
+    let isDragging = false;
+    let startX, startY, initialLeft, initialTop;
+
+    header.addEventListener("mousedown", (e) => {
+      // 不拦截按钮点击
+      if (e.target.closest("button")) return;
+
+      isDragging = true;
+      const rect = panel.getBoundingClientRect();
+      startX = e.clientX;
+      startY = e.clientY;
+      initialLeft = rect.left;
+      initialTop = rect.top;
+
+      // 切换为 left/top 定位（移除 right）
+      panel.style.left = rect.left + "px";
+      panel.style.top = rect.top + "px";
+      panel.style.right = "auto";
+      panel.style.transformOrigin = "top left";
+
+      e.preventDefault();
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      let newLeft = initialLeft + dx;
+      let newTop = initialTop + dy;
+
+      // 边界限制
+      const panelRect = panel.getBoundingClientRect();
+      newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - panelRect.width));
+      newTop = Math.max(0, Math.min(newTop, window.innerHeight - panelRect.height));
+
+      panel.style.left = newLeft + "px";
+      panel.style.top = newTop + "px";
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+    });
+  }
+
   // 创建指示器面板
   function createIndicatorPanel() {
     const panel = document.createElement("div");
@@ -216,6 +265,9 @@
     document
       .getElementById("cai-finish-btn")
       .addEventListener("click", finishAndCopy);
+
+    // 拖动功能
+    setupPanelDrag(panel);
 
     return panel;
   }
